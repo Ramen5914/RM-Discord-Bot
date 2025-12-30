@@ -1,0 +1,6 @@
+services:
+  app:
+    build: .
+    command: node dist/main.js
+    volumes:
+      - ./data:/app/data
