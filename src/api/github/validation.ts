@@ -51,7 +51,7 @@ export const ReleasesList = z.array(
         state: z.string(),
         content_type: z.string(),
         size: z.int().positive(),
-        digest: z.string(),
+        digest: z.string().nullable(),
         download_count: z.int(),
         created_at: z.iso.datetime(),
         updated_at: z.iso.datetime(),
