@@ -36,17 +36,38 @@ export class Setup {
   ): Promise<void> {
     const mods: Mod[] = db.get('mods') || [];
 
-    const [owner, repo] = github.split('/');
+    const trimmedName = name.trim();
+    const trimmedGithub = github.trim();
 
-    mods.push({
-      name: name,
-      gitHubOwner: owner,
-      gitHubRepo: repo,
-    });
+    const [owner, repo] = trimmedGithub.split('/').map((part) => part.trim());
+    if (!owner || !repo) {
+      await interaction.reply({ content: 'Please provide GitHub as owner/repo.', ephemeral: true });
+      return;
+    }
 
-    db.set('mods', mods);
+    const alreadyExists = mods.some(
+      (m) =>
+        m.name.toLowerCase() === trimmedName.toLowerCase() ||
+        `${m.gitHubOwner}/${m.gitHubRepo}`.toLowerCase() === `${owner}/${repo}`.toLowerCase(),
+    );
 
-    interaction.reply('This command is not yet implemented.');
+    if (alreadyExists) {
+      await interaction.reply({ content: 'That mod is already registered.', ephemeral: true });
+      return;
+    }
+
+    const updatedMods: Mod[] = [
+      ...mods,
+      {
+        name: trimmedName,
+        gitHubOwner: owner,
+        gitHubRepo: repo,
+      },
+    ];
+
+    db.set('mods', updatedMods);
+
+    await interaction.reply({ content: `Added mod ${trimmedName} (${owner}/${repo}).`, ephemeral: true });
   }
 
   @Slash({ description: 'Edit mod details' })
