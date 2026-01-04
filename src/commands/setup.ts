@@ -67,7 +67,10 @@ export class Setup {
 
     db.set('mods', updatedMods);
 
-    await interaction.reply({ content: `Added mod ${trimmedName} (${owner}/${repo}).`, ephemeral: true });
+    await interaction.reply({
+      content: `Added mod ${trimmedName} (${owner}/${repo}).`,
+      ephemeral: true,
+    });
   }
 
   @Slash({ description: 'Edit mod details' })
