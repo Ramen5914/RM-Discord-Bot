@@ -4,3 +4,12 @@ services:
     command: node dist/main.js
     volumes:
       - ./data:/app/data
+  db:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: discord_data
+    ports:
+      - "5433:5432"
