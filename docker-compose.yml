@@ -4,12 +4,19 @@ services:
     command: node dist/main.js
     volumes:
       - ./data:/app/data
+    depends_on:
+      db:
+        condition: service_healthy
   db:
     image: postgres:latest
-    container_name: postgres
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: discord_data
     ports:
       - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d discord_data"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
