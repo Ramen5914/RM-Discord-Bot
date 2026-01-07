@@ -4,28 +4,40 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class Mod {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-  @Column()
+
+  @Column({ unique: true })
   name: string;
-  @Column()
-  gitHubOwner: string;
-  @Column()
-  gitHubRepo: string;
-  @Column()
-  modrinthId: string;
-  @Column()
-  curseforgeId: string;
-  @Column('int')
-  categoryId: number;
-  @Column('int')
-  announcementChannelId: number;
-  @Column('int')
-  infoChannelId: number;
-  @Column('int')
-  githubChannelId: number;
-  @Column('int')
-  collaboratorChannelId: number;
-  @Column('int')
-  suggestionsChannelId: number;
-  @Column('int')
-  supportChannelId: number;
+
+  @Column({ nullable: true })
+  gitHubOwner: string | null;
+
+  @Column({ nullable: true })
+  gitHubRepo: string | null;
+
+  @Column({ nullable: true })
+  modrinthId: string | null;
+
+  @Column({ nullable: true })
+  curseforgeId: string | null;
+
+  @Column({ type: 'int', nullable: true })
+  categoryId: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  announcementChannelId: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  infoChannelId: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  githubChannelId: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  collaboratorChannelId: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  suggestionsChannelId: number | null;
+
+  @Column({ type: 'int', nullable: true })
+  supportChannelId: number | null;
 }
