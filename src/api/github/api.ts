@@ -6,7 +6,7 @@ const apiKey = process.env.GITHUB_PAT;
 
 export async function listReleases(owner: string, repo: string): Promise<ReleasesListT> {
   if (!apiKey) {
-    throw new Error('MODRINTH_PAT is not set in environment variables');
+    throw new Error('GITHUB_PAT is not set in environment variables');
   }
 
   const response = await fetch(`${baseUrl}/repos/${owner}/${repo}/releases`, {
