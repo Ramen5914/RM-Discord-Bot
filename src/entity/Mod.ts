@@ -1,23 +1,24 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { GuildEntity } from './Guild.js';
 
-@Entity()
-export class Mod {
+@Entity('mod')
+export class ModEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', unique: true })
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   gitHubOwner: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   gitHubRepo: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   modrinthId: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   curseforgeId: string | null;
 
   @Column({ type: 'int', nullable: true })
@@ -40,4 +41,8 @@ export class Mod {
 
   @Column({ type: 'int', nullable: true })
   supportChannelId: number | null;
+
+  @ManyToOne(() => GuildEntity, (guild) => guild.mods)
+  // @Column({ type: 'varchar', length: 19 })
+  guild: GuildEntity;
 }
