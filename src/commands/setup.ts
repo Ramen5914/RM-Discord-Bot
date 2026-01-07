@@ -1,36 +1,30 @@
-import { ApplicationCommandOptionType, CommandInteraction } from 'discord.js';
-import { Discord, Guard, Slash, SlashOption } from 'discordx';
-import { IsAdmin } from '../guards/admin.js';
-import { Mod } from '../entity/Mod.js';
+import { ApplicationCommandOptionType, CommandInteraction, Role } from 'discord.js';
+import { Discord, Slash, SlashOption } from 'discordx';
 import { AppDataSource } from '../main.js';
+import { GuildEntity } from '../entity/Guild.js';
 
 @Discord()
 export class Setup {
-  @Slash({ description: 'Setup categories, channels, and roles for a new mod' })
-  @Guard(IsAdmin)
-  async new_mod(
+  @Slash({ description: 'Setup the bot in this server' })
+  async setup(
     @SlashOption({
-      description: 'Mod name',
-      name: 'name',
+      description: 'Moderator Role',
+      name: 'moderator_role',
       required: true,
-      type: ApplicationCommandOptionType.String,
+      type: ApplicationCommandOptionType.Role, // Role type
     })
-    name: string,
+    moderatorRole: Role,
     interaction: CommandInteraction,
   ): Promise<void> {
-    const mod = new Mod();
+    const guildRepository = AppDataSource.manager.getRepository(GuildEntity);
 
-    mod.name = name.trim();
+    const guild = new GuildEntity();
+    guild.id = interaction.guild!.id;
+    guild.moderatorRoleId = moderatorRole.id;
+    const savedGuild = await guildRepository.save(guild);
 
-    const modRepository = AppDataSource.manager.getRepository(Mod);
-    const savedMod = await modRepository.save(mod);
-
-    await interaction.reply({
-      content: `Added mod ${savedMod.name} with id:${savedMod.id} to the database.`,
-      ephemeral: true,
-    });
+    await interaction.reply(`Setup complete for guild with id: ${savedGuild.id}`);
   }
-
   // @Slash({ description: 'Edit mod details' })
   // @Guard(IsAdmin)
   // async edit_mod(
