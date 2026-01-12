@@ -2,7 +2,6 @@ import { Discord, Guard, ModalComponent, Slash, SlashOption } from 'discordx';
 import { IsAdmin } from '../guards/admin.js';
 import {
   ApplicationCommandOptionType,
-  AutocompleteInteraction,
   CategoryChannel,
   CommandInteraction,
   ForumChannel,
@@ -17,6 +16,7 @@ import {
 import { AppDataSource } from '../main.js';
 import { ModEntity } from '../entity/Mod.js';
 import { GuildEntity } from '../entity/Guild.js';
+import { autocompleteModNames, getGuildById } from '../utils/database.js';
 
 @Discord()
 export class EditMod {
@@ -24,27 +24,7 @@ export class EditMod {
   @Guard(IsAdmin)
   async edit_mod_data(
     @SlashOption({
-      autocomplete: async (interaction: AutocompleteInteraction) => {
-        const guildId = interaction.guild!.id;
-
-        const guildRepository = AppDataSource.manager.getRepository(GuildEntity);
-        const guild = await guildRepository.findOneBy({ id: guildId });
-
-        if (!guild) {
-          interaction.respond([]);
-          return;
-        }
-
-        const modRepository = AppDataSource.manager.getRepository(ModEntity);
-        const mods = await modRepository.findBy({ guild: guild });
-
-        const focused = interaction.options.getFocused();
-        const filtered = mods
-          .filter((mod) => mod.name.toLowerCase().includes(focused.toLowerCase()))
-          .slice(0, 25)
-          .map((mod) => ({ name: mod.name, value: mod.name }));
-        interaction.respond(filtered);
-      },
+      autocomplete: autocompleteModNames,
       description: 'Mod to get downloads for',
       name: 'mod',
       required: true,
@@ -53,8 +33,7 @@ export class EditMod {
     mod: string,
     interaction: CommandInteraction,
   ): Promise<void> {
-    const guildRepository = AppDataSource.manager.getRepository(GuildEntity);
-    const guild = await guildRepository.findOneBy({ id: interaction.guild!.id });
+    const guild = await getGuildById(interaction.guild!.id);
 
     if (!guild) {
       interaction.reply('Guild not found in database. Please run the setup command first.');
@@ -126,27 +105,7 @@ export class EditMod {
   @Guard(IsAdmin)
   async edit_mod_channels(
     @SlashOption({
-      autocomplete: async (interaction: AutocompleteInteraction) => {
-        const guildId = interaction.guild!.id;
-
-        const guildRepository = AppDataSource.manager.getRepository(GuildEntity);
-        const guild = await guildRepository.findOneBy({ id: guildId });
-
-        if (!guild) {
-          interaction.respond([]);
-          return;
-        }
-
-        const modRepository = AppDataSource.manager.getRepository(ModEntity);
-        const mods = await modRepository.findBy({ guild: guild });
-
-        const focused = interaction.options.getFocused();
-        const filtered = mods
-          .filter((mod) => mod.name.toLowerCase().includes(focused.toLowerCase()))
-          .slice(0, 25)
-          .map((mod) => ({ name: mod.name, value: mod.name }));
-        interaction.respond(filtered);
-      },
+      autocomplete: autocompleteModNames,
       description: 'Mod to get downloads for',
       name: 'mod',
       required: true,
@@ -154,17 +113,17 @@ export class EditMod {
     })
     mod: string,
     @SlashOption({
-      description: 'New Category',
+      description: 'New Category (ID)',
       name: 'category',
       required: false,
-      type: ApplicationCommandOptionType.Channel,
+      type: ApplicationCommandOptionType.String,
     })
     category: CategoryChannel | undefined,
     @SlashOption({
-      description: 'New Announcement Channel (ID)',
+      description: 'New Announcement Channel',
       name: 'announcement_channel',
       required: false,
-      type: ApplicationCommandOptionType.String,
+      type: ApplicationCommandOptionType.Channel,
     })
     announcementChannel: NewsChannel | undefined,
     @SlashOption({
