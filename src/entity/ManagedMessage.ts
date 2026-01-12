@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
-import type { ModEntity } from './Mod.js';
+import { ModEntity } from './Mod.js';
 
 export enum MessageType {
   DOWNLOAD_INFO = 'downloadInfo',
@@ -16,6 +16,6 @@ export class ManagedMessageEntity {
   })
   type: MessageType;
 
-  @ManyToOne('ModEntity', 'managedMessages')
+  @ManyToOne(() => ModEntity)
   mod: ModEntity;
 }

@@ -1,5 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
-import { ModEntity } from './Mod.js';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('guild')
 export class GuildEntity {
@@ -8,7 +7,4 @@ export class GuildEntity {
 
   @Column({ type: 'varchar', length: 19 })
   moderatorRoleId: string;
-
-  @OneToMany(() => ModEntity, (mod) => mod.guild)
-  mods: ModEntity[];
 }
