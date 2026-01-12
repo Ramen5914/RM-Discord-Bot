@@ -21,26 +21,29 @@ export class ModEntity {
   @Column({ type: 'varchar', nullable: true })
   curseforgeId: string | null;
 
-  @Column({ type: 'int', nullable: true })
-  categoryId: number | null;
+  @Column({ type: 'varchar', length: 19, nullable: true })
+  categoryId: string | null;
 
-  @Column({ type: 'int', nullable: true })
-  announcementChannelId: number | null;
+  @Column({ type: 'varchar', length: 19, nullable: true })
+  announcementChannelId: string | null;
 
-  @Column({ type: 'int', nullable: true })
-  infoChannelId: number | null;
+  @Column({ type: 'varchar', length: 19, nullable: true })
+  infoChannelId: string | null;
 
-  @Column({ type: 'int', nullable: true })
-  githubChannelId: number | null;
+  @Column({ type: 'varchar', length: 19, nullable: true })
+  githubChannelId: string | null;
 
-  @Column({ type: 'int', nullable: true })
-  collaboratorChannelId: number | null;
+  @Column({ type: 'varchar', length: 19, nullable: true })
+  chatChannelId: string | null;
 
-  @Column({ type: 'int', nullable: true })
-  suggestionsChannelId: number | null;
+  @Column({ type: 'varchar', length: 19, nullable: true })
+  collaboratorChannelId: string | null;
 
-  @Column({ type: 'int', nullable: true })
-  supportChannelId: number | null;
+  @Column({ type: 'varchar', length: 19, nullable: true })
+  suggestionsChannelId: string | null;
+
+  @Column({ type: 'varchar', length: 19, nullable: true })
+  supportChannelId: string | null;
 
   @ManyToOne(() => GuildEntity, (guild) => guild.mods)
   // @Column({ type: 'varchar', length: 19 })
