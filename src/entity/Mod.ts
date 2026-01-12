@@ -1,6 +1,6 @@
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { GuildEntity } from './Guild.js';
-import { ManagedMessageEntity } from './ManagedMessage.js';
+import type { ManagedMessageEntity } from './ManagedMessage.js';
 
 @Entity('mod')
 export class ModEntity {
@@ -46,7 +46,7 @@ export class ModEntity {
   @Column({ type: 'varchar', length: 19, nullable: true })
   supportChannelId: string | null;
 
-  @OneToMany(() => ManagedMessageEntity, (managedMessage) => managedMessage.mod)
+  @OneToMany('ManagedMessageEntity', 'mod')
   managedMessages: ManagedMessageEntity[];
 
   @ManyToOne(() => GuildEntity, (guild) => guild.mods)
