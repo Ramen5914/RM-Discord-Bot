@@ -46,6 +46,5 @@ export class ModEntity {
   supportChannelId: string | null;
 
   @ManyToOne(() => GuildEntity, (guild) => guild.mods)
-  // @Column({ type: 'varchar', length: 19 })
   guild: GuildEntity;
 }
