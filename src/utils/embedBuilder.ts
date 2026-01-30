@@ -46,11 +46,16 @@ export async function buildModInfoEmbed(mod: ModEntity): Promise<EmbedBuilder> {
           color = mrResponse.color;
         }
         mrDownloads = mrResponse.downloads;
-        // Get latest version details from the versions array
+        // Get latest version details from the versions array (last element is most recent)
         if (mrResponse.versions && mrResponse.versions.length > 0) {
           try {
-            const versionDetails = await getVersion(mrResponse.versions[0]);
-            mrLatestVersion = versionDetails.version_number;
+            // Use the last element which is the most recent version
+            const latestVersionId = mrResponse.versions[mrResponse.versions.length - 1];
+            const versionDetails = await getVersion(latestVersionId);
+            // Add lowercase 'v' prefix if not already present
+            mrLatestVersion = versionDetails.version_number.startsWith('v')
+              ? versionDetails.version_number
+              : `v${versionDetails.version_number}`;
             mrLatestDate = new Date(versionDetails.date_published).toLocaleDateString();
           } catch (versionError) {
             console.error(
