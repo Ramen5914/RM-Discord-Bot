@@ -5,6 +5,7 @@ import { bot } from './bot.js';
 import { DataSource } from 'typeorm';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import { initializeScheduler } from './scheduler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,6 +30,8 @@ async function run() {
   }
 
   await importx(`${dirname(import.meta.url)}/{events,commands}/**/*.{ts,js}`);
+
+  initializeScheduler(bot, AppDataSource);
 
   if (!process.env.BOT_TOKEN) {
     throw Error('Could not find BOT_TOKEN in your environment');
