@@ -17,6 +17,7 @@ import { AppDataSource } from '../main.js';
 import { ModEntity } from '../entity/Mod.js';
 import { GuildEntity } from '../entity/Guild.js';
 import { autocompleteModNames, getGuildById } from '../utils/database.js';
+import { populateModLinks } from '../utils/linkBuilder.js';
 
 @Discord()
 export class EditMod {
@@ -91,11 +92,22 @@ export class EditMod {
           .setRequired(false),
       );
 
+    const githubProjectBoardLabelComponent = new LabelBuilder()
+      .setLabel('GitHub Project Board URL')
+      .setTextInputComponent(
+        new TextInputBuilder()
+          .setCustomId('githubProjectBoardField')
+          .setStyle(TextInputStyle.Short)
+          .setPlaceholder(selectedMod.githubProjectBoardUrl || 'Enter GitHub Project Board URL')
+          .setRequired(false),
+      );
+
     modal.addLabelComponents(
       nameLabelComponent,
       githubLabelComponent,
       modrinthLabelComponent,
       curseforgeLabelComponent,
+      githubProjectBoardLabelComponent,
     );
 
     interaction.showModal(modal);
@@ -208,11 +220,12 @@ export class EditMod {
   async EditModDataForm(interaction: ModalSubmitInteraction): Promise<void> {
     const modId = interaction.customId.replace('edit_mod_data_modal-', '');
 
-    const [name, github, modrinth, curseforge] = [
+    const [name, github, modrinth, curseforge, githubProjectBoard] = [
       'nameField',
       'githubField',
       'modrinthField',
       'curseforgeField',
+      'githubProjectBoardField',
     ].map((id) => interaction.fields.getTextInputValue(id));
 
     const modRepository = AppDataSource.manager.getRepository(ModEntity);
@@ -230,6 +243,10 @@ export class EditMod {
     mod.gitHubRepo = github.split('/')[1] || mod.gitHubRepo;
     mod.modrinthId = modrinth || mod.modrinthId;
     mod.curseforgeId = curseforge || mod.curseforgeId;
+    mod.githubProjectBoardUrl = githubProjectBoard || mod.githubProjectBoardUrl;
+
+    // Populate links from APIs
+    await populateModLinks(mod);
 
     // Save the updated mods array back to the database
     const savedMod = await modRepository.save(mod);

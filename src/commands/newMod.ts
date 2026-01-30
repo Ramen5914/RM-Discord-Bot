@@ -4,6 +4,7 @@ import { ApplicationCommandOptionType, CommandInteraction, Guild, MessageFlags }
 import { ModEntity } from '../entity/Mod.js';
 import { AppDataSource } from '../main.js';
 import { GuildEntity } from '../entity/Guild.js';
+import { populateModLinks } from '../utils/linkBuilder.js';
 
 @Discord()
 export class NewMod {
@@ -39,6 +40,9 @@ export class NewMod {
 
     const modRepository = AppDataSource.manager.getRepository(ModEntity);
     const savedMod = await modRepository.save(mod);
+
+    // Populate links from APIs
+    await populateModLinks(savedMod);
 
     const guildRepository = AppDataSource.manager.getRepository(GuildEntity);
     guildRepository.findOneBy({ id: interaction.guild!.id }).then(async (guildEntity) => {
