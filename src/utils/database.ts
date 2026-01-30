@@ -1,4 +1,4 @@
-import { AutocompleteInteraction } from 'discord.js';
+import { AutocompleteInteraction, CommandInteraction } from 'discord.js';
 import { AppDataSource } from '../main.js';
 import { GuildEntity } from '../entity/Guild.js';
 import { ModEntity } from '../entity/Mod.js';
@@ -33,4 +33,25 @@ export async function getGuildById(id: string): Promise<GuildEntity | null> {
 export async function getModByGuildAndName(guild: GuildEntity, name: string) {
   const modRepository = AppDataSource.manager.getRepository(ModEntity);
   return await modRepository.findOneBy({ guild: guild, name: name });
+}
+
+export async function getModFromDatabase(
+  interaction: CommandInteraction,
+  name: string,
+): Promise<ModEntity | null> {
+  const guild = await getGuildById(interaction.guild!.id);
+
+  if (!guild) {
+    interaction.reply('Guild not found in database. Please run the setup command first.');
+    return null;
+  }
+
+  const modEntity = await getModByGuildAndName(guild, name);
+
+  if (!modEntity) {
+    interaction.reply('Mod not found in database.');
+    return null;
+  }
+
+  return modEntity;
 }
