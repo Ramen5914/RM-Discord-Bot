@@ -121,8 +121,14 @@ export async function buildModInfoEmbed(mod: ModEntity): Promise<EmbedBuilder> {
     ? `[${ghDownloads} Downloads](${mod.githubRepoUrl}/releases)`
     : ghDownloads.toString();
 
+  // Calculate total downloads
+  let totalDownloads = 0;
+  if (typeof cfDownloads === 'number') totalDownloads += cfDownloads;
+  if (typeof mrDownloads === 'number') totalDownloads += mrDownloads;
+  if (typeof ghDownloads === 'number') totalDownloads += ghDownloads;
+
   embed.addFields(
-    { name: 'Downloads', value: '\u200b', inline: false },
+    { name: 'Downloads', value: totalDownloads.toLocaleString(), inline: false },
     { name: 'CurseForge', value: cfValue, inline: true },
     { name: 'Modrinth', value: mrValue, inline: true },
     { name: 'GitHub', value: ghValue, inline: true },
