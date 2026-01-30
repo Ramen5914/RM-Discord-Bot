@@ -7,6 +7,7 @@ import { listReleases } from '../api/github/api.js';
 export async function buildModInfoEmbed(mod: ModEntity): Promise<EmbedBuilder> {
   let color: number = 0xffffff;
   let description: string = '';
+  let iconUrl: string | null = null;
 
   // Fetch CurseForge data for description and downloads
   let cfDownloads: number | string = 'N/A';
@@ -19,6 +20,9 @@ export async function buildModInfoEmbed(mod: ModEntity): Promise<EmbedBuilder> {
       if (cfResponse.data) {
         description = cfResponse.data.summary || '';
         cfDownloads = cfResponse.data.downloadCount;
+        if (cfResponse.data.logo && cfResponse.data.logo.url) {
+          iconUrl = cfResponse.data.logo.url;
+        }
         if (cfResponse.data.latestFiles && cfResponse.data.latestFiles.length > 0) {
           // Find the latest file by sorting by file date
           const latestFile = cfResponse.data.latestFiles.reduce((latest, current) => {
@@ -31,9 +35,7 @@ export async function buildModInfoEmbed(mod: ModEntity): Promise<EmbedBuilder> {
     } catch (error) {
       console.error(`Error fetching CurseForge data for mod ${mod.name}:`, error);
     }
-  }
-
-  // Fetch Modrinth data
+  }  // Fetch Modrinth data
   let mrDownloads: number | string = 'N/A';
   let mrLatestVersion: string | null = null;
   let mrLatestDate: string | null = null;
@@ -46,6 +48,10 @@ export async function buildModInfoEmbed(mod: ModEntity): Promise<EmbedBuilder> {
           color = mrResponse.color;
         }
         mrDownloads = mrResponse.downloads;
+        // Use Modrinth icon if CurseForge didn't provide one
+        if (!iconUrl && mrResponse.icon_url) {
+          iconUrl = mrResponse.icon_url;
+        }
         // Get latest version details from the versions array (last element is most recent)
         if (mrResponse.versions && mrResponse.versions.length > 0) {
           try {
@@ -100,7 +106,10 @@ export async function buildModInfoEmbed(mod: ModEntity): Promise<EmbedBuilder> {
     .setURL(mod.homepageUrl || null)
     .setDescription(description || 'No description available')
     .setColor(color);
-
+  // Add mod icon as thumbnail if available
+  if (iconUrl) {
+    embed.setThumbnail(iconUrl);
+  }
   // Add download fields - field names are plain text, links go in values
   const cfValue = mod.curseforgeUrl
     ? `[${cfDownloads} Downloads](${mod.curseforgeUrl})`
