@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { GuildEntity } from './Guild.js';
+import type { ManagedMessageEntity } from './ManagedMessage.js';
 
 @Entity('mod')
 export class ModEntity {
@@ -44,6 +45,33 @@ export class ModEntity {
 
   @Column({ type: 'varchar', length: 19, nullable: true })
   supportChannelId: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  homepageUrl: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  wikiUrl: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  issuesUrl: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  sourceUrl: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  curseforgeUrl: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  modrinthUrl: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  githubRepoUrl: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  githubProjectBoardUrl: string | null;
+
+  @OneToMany('ManagedMessageEntity', (managedMessage: ManagedMessageEntity) => managedMessage.mod)
+  managedMessages: ManagedMessageEntity[];
 
   @ManyToOne(() => GuildEntity)
   guild: GuildEntity;
